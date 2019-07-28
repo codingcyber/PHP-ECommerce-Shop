@@ -49,7 +49,7 @@ users
 -username
 -email
 -mobile
--password
+-password - Password hash for password "test" - "$2y$10$OsgxIz.LS4GPH2tPysPj6OpRfKq7iNfgtpDB3LMKnxmoVXBdwrrHy"
 -role
 -created
 -updated
