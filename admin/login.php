@@ -1,6 +1,7 @@
 <?php 
 session_start();
-include('../includes/connect.php'); 
+require_once('../includes/connect.php');
+include('includes/if-loggedin.php'); 
 // If User LoggedIn redirect to dashboard page
 include('includes/header.php'); 
 if(isset($_POST) & !empty($_POST)){
