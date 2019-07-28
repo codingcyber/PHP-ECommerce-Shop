@@ -79,7 +79,7 @@ orders
 -coupon
 -discount
 -created
--udpated
+-updated
 
 order_items
 -id
@@ -88,7 +88,7 @@ order_items
 -product_price
 -product_quantity
 -created
--upated
+-updated
 
 order_status
 -id
