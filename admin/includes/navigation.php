@@ -7,7 +7,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Shop Admin</a>
+                <a class="navbar-brand" href="dashboard.php">Shop Admin</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -18,12 +18,12 @@
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        <li><a href="profile.php"><i class="fa fa-user fa-fw"></i> User Profile</a>
                         </li>
-                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        <li><a href="settings.php"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -47,16 +47,16 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                            <a href="dashboard.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Product Categories<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">Add Category</a>
+                                    <a href="add-category.php">Add Category</a>
                                 </li>
                                 <li>
-                                    <a href="#">View Categories</a>
+                                    <a href="view-categories.php">View Categories</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -65,10 +65,10 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Products<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">Add Product</a>
+                                    <a href="add-product.php">Add Product</a>
                                 </li>
                                 <li>
-                                    <a href="#">View Products</a>
+                                    <a href="view-products.php">View Products</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -77,16 +77,16 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Pages<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">Add Pages</a>
+                                    <a href="add-page.php">Add Page</a>
                                 </li>
                                 <li>
-                                    <a href="#">View Pages</a>
+                                    <a href="view-pages.php">View Pages</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-table fa-fw"></i> Reviews</a>
+                            <a href="reviews.php"><i class="fa fa-table fa-fw"></i> Reviews</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-table fa-fw"></i> Media</a>
@@ -95,7 +95,7 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Orders<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">View Orders</a>
+                                    <a href="view-orders.php">View Orders</a>
                                 </li>
                                 <li>
                                     <a href="#">Process Orders</a>
@@ -116,13 +116,13 @@
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Customers<span class="fa arrow"></span></a>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Users<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">Add Customer</a>
+                                    <a href="add-user.php">Add User</a>
                                 </li>
                                 <li>
-                                    <a href="#">View Customer</a>
+                                    <a href="view-users.php">View Users</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -131,7 +131,7 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Settings<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">Site Settings</a>
+                                    <a href="settings.php">Site Settings</a>
                                 </li>
                                 <li>
                                     <a href="#">General Articles</a>
