@@ -6,6 +6,7 @@ if(isset($_POST) & !empty($_POST)){
     if(empty($_POST['title'])){ $errors[] = "Title field is Required";}
     if(empty($_POST['description'])){ $errors[] = "Description field is Required";}
     if(empty($_POST['price'])){ $errors[] = "Price field is Required";}
+    if(empty($_FILES['image']['name'])){ $errors[] = "You Should Upload a File";}
     if(empty($_POST['slug'])){ $slug = trim($_POST['title']); }else{ $slug = trim($_POST['slug']); }
     // check slug in unique with db Query
     $search = array(' ', ',', '.', '_');
@@ -43,18 +44,48 @@ if(isset($_POST) & !empty($_POST)){
     }
 
     if(empty($errors)){
+        // upload the file
+        if(isset($_FILES) & !empty($_FILES)){
+            $name = $_FILES['image']['name'];
+            $size = $_FILES['image']['size'];
+            $type = $_FILES['image']['type'];
+            $tmp_name = $_FILES['image']['tmp_name'];
+
+            if(isset($name) & !empty($name)){
+                if($type == "image/jpeg"){
+                    $location = "../media/";
+                    $filename = time() . $name;
+                    $uploadpath = $location.$filename;
+                    $dbpath = "media/".$filename;
+                    move_uploaded_file($tmp_name, $uploadpath);
+                }else{
+                    $errors[] = "Only Upload JPEG files";
+                }
+            }
+        }
         // Insert into products table
-        $sql = "INSERT INTO products (title, description, type, status, price, slug) VALUES (:title, :description, :type, :status, :price, :slug)";
+        $sql = "INSERT INTO products (title, description, type, status, price, slug, image) VALUES (:title, :description, :type, :status, :price, :slug, :image)";
         $result = $db->prepare($sql);
         $values = array(':title'        => $_POST['title'],
                         ':description'  => $_POST['description'],
                         ':type'         => $_POST['type'],
                         ':status'       => $_POST['status'],
                         ':price'        => $_POST['price'],
-                        ':slug'         => $slug
+                        ':slug'         => $slug,
+                        ':image'        => $dbpath
                         );
         $res = $result->execute($values) or die(print_r($result->errorInfo(), true));
         if($res){
+            // After inserting the article, insert category id and article id into post_categories table
+            $pid = $db->lastInsertID();
+            foreach ($_POST['categories'] as $category) {
+                $sql = "INSERT INTO product_categories (pid, cid) VALUES (:pid, :cid)";
+                $result = $db->prepare($sql);
+                $values = array(':pid'  => $pid,
+                                ':cid'  => $category
+                                );
+                $res = $result->execute($values);
+            }
             header('location: view-products.php');
         }else{
             $errors[] = "Failed to Add Product";
@@ -94,7 +125,7 @@ include('includes/navigation.php');
                     ?>
                     <div class="row">
                         <div class="col-lg-12">
-                            <form role="form" method="post">
+                            <form role="form" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
                                 <div class="form-group">
                                     <label>Product Title</label>
@@ -106,7 +137,7 @@ include('includes/navigation.php');
                                 </div>
                                 <div class="form-group">
                                     <label>Product Image</label>
-                                    <input type="file">
+                                    <input type="file" name="image">
                                 </div>
 
                                 <div class="row">
