@@ -1,5 +1,7 @@
 <?php 
 // check login
+include('../includes/connect.php'); 
+include('includes/check-login.php');
 include('includes/header.php');
 include('includes/navigation.php'); 
 ?>

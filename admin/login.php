@@ -1,6 +1,7 @@
 <?php 
 session_start();
 include('../includes/connect.php'); 
+// If User LoggedIn redirect to dashboard page
 include('includes/header.php'); 
 if(isset($_POST) & !empty($_POST)){
     // PHP Form Validations
@@ -82,6 +83,9 @@ $_SESSION['csrf_token_time']    = time();
                             }
                             echo "</div>";
                         }
+                        echo "<pre>";
+                        print_r($_SESSION);
+                        echo "</pre>";
                     ?>
                     <form role="form" method="post">
                         <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
