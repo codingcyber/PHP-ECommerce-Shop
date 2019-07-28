@@ -84,9 +84,6 @@ $_SESSION['csrf_token_time']    = time();
                             }
                             echo "</div>";
                         }
-                        echo "<pre>";
-                        print_r($_SESSION);
-                        echo "</pre>";
                     ?>
                     <form role="form" method="post">
                         <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
