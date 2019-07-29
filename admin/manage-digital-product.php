@@ -2,12 +2,16 @@
 require_once('../includes/connect.php');
 include('includes/check-login.php'); 
 // check the media exists in product_digital table, if exits fetch the media and display in the form or fetch product details and display them in form
-$sql = "SELECT * FROM product_digital WHERE id=?";
+$sql = "SELECT * FROM product_digital WHERE pid=?";
 $result = $db->prepare($sql);
 $result->execute(array($_GET['id']));
 $mediacount = $result->rowCount();
 if($mediacount == 1){
-    // fetch the media and display in the form
+    // fetch the media & product details, then display in the form
+    $sql = "SELECT p.title, p.price, pd.media FROM products p JOIN product_digital pd ON pd.pid=p.id WHERE p.id=?";
+    $result = $db->prepare($sql);
+    $result->execute(array($_GET['id']));
+    $product = $result->fetch(PDO::FETCH_ASSOC);
 }else{
     //fetch product details and display them in form 
     $sql = "SELECT * FROM products WHERE id=?";
@@ -63,7 +67,17 @@ if(isset($_POST) & !empty($_POST)){
         // check product media, if media exist - create or updte the media
         if($mediacount == 1){
             // update the product media in product_ditial
-            echo "Update";
+            $sql = "UPDATE product_digital SET pid=:pid, media=:media";
+            $result = $db->prepare($sql);
+            $values = array(':pid'    => $_POST['id'],
+                            ':media'  => $dbpath
+                            );
+            $res = $result->execute($values) or die(print_r($result->errorInfo(), true));
+            if($res){
+                header('location: view-products.php');
+            }else{
+                $errors[] = "Failed to Update Product Media";
+            }
         }else{
             // insert the media in product_ditial
             $sql = "INSERT INTO product_digital (pid, media) VALUES (:pid, :media)";
@@ -73,7 +87,7 @@ if(isset($_POST) & !empty($_POST)){
                             );
             $res = $result->execute($values) or die(print_r($result->errorInfo(), true));
             if($res){
-                header('location: view-product.php');
+                header('location: view-products.php');
             }else{
                 $errors[] = "Failed to Add Product Media";
             }
@@ -130,7 +144,14 @@ include('includes/navigation.php');
                                 </div> -->
                                 <div class="form-group">
                                     <label>Product Media</label>
+                                    <?php 
+                                        if(isset($product['media']) & !empty($product['media'])){
+                                            echo "<p>".$product['media']."</p>";
+                                            echo "<a href='delete-digital-media.php?id=".$_GET['id']."'>Delete Media</a>";
+                                        }else{
+                                     ?>
                                     <input type="file" name="media">
+                                    <?php } ?>
                                 </div>
 
                                 <input type="submit" class="btn btn-primary" value="Submit" />
