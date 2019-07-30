@@ -1,4 +1,12 @@
-<?php include('includes/header.php'); ?>
+<?php 
+require_once('includes/connect.php');
+include('includes/header.php'); 
+?>
+<style type="text/css">
+	.shop-mason-4col .sm-item{
+		float: left;
+	}
+</style>
 <!-- SHOP CONTENT -->
 <section id="content">
 	<div class="content-blog">
@@ -11,14 +19,23 @@
 				<div class="col-md-12">
 					<div class="row">
 						<div id="shop-mason" class="shop-mason-4col">
+							<?php 
+								// TODO : Add Pagination
+								// Only show Published products
+								$sql = "SELECT * FROM products";
+                                    $result = $db->prepare($sql);
+                                    $result->execute();
+                                    $res = $result->fetchAll(PDO::FETCH_ASSOC);
+                                    foreach ($res as $product) {
+							 ?>
 							<div class="sm-item isotope-item">
 								<div class="product">
 									<div class="product-thumb">
-										<img src="images/shop/1.jpg" class="img-responsive" alt="">
+										<img src="<?php echo $product['image']; ?>" class="img-responsive" alt="">
 										<div class="product-overlay">
 											<span>
-											<a href="./shop-single-full.html" class="fa fa-link"></a>
-											<a href="./shop-single-full.html" class="fa fa-shopping-cart"></a>
+											<a href="product.php?id=<?php echo $product['id']; ?>" class="fa fa-link"></a>
+											<a href="add-to-cart.php?id=<?php echo $product['id']; ?>" class="fa fa-shopping-cart"></a>
 											</span>					
 										</div>
 									</div>
@@ -29,10 +46,11 @@
 										<span class="fa fa-star act"></span>
 										<span class="fa fa-star act"></span>
 									</div>
-									<h2 class="product-title"><a href="#">Product 1</a></h2>
-									<div class="product-price">&#8377;79.00<span>&#8377;200.00</span></div>
+									<h2 class="product-title"><a href="#"><?php echo $product['title']; ?></a></h2>
+									<div class="product-price">&#8377;<?php echo $product['price']; ?></div>
 								</div>
 							</div>
+							<?php } ?>
 							
 						</div>
 					</div>
