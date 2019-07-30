@@ -1,4 +1,21 @@
-<?php include('includes/header.php'); ?>
+<?php 
+require_once('includes/connect.php');
+if(isset($_GET['id']) & !empty($_GET['id'])){
+	$sql = "SELECT * FROM products WHERE id=?";
+    $result = $db->prepare($sql);
+    $result->execute(array($_GET['id']));
+    $product = $result->fetch(PDO::FETCH_ASSOC);
+
+    // get the category names based on product id from product_categories table
+    $catsql = "SELECT categories.title FROM categories JOIN product_categories ON product_categories.cid=categories.id WHERE product_categories.pid=?";
+    $catresult = $db->prepare($catsql);
+    $catresult->execute(array($_GET['id']));
+    $categories = $catresult->fetchAll(PDO::FETCH_ASSOC);
+}else{
+	header('location: index.php');
+}
+include('includes/header.php');
+?>
 <style type="text/css">
 	.shop-mason-3col .sm-item {
 		float: left;
@@ -22,7 +39,7 @@
 						<div class="gal-wrap">
 							<div id="gal-slider" class="flexslider">
 								<ul class="slides">
-									<li><img src="images/shop/1.jpg" class="img-responsive" alt=""/></li>
+									<li><img src="<?php echo $product['image']; ?>" class="img-responsive" alt=""/></li>
 								</ul>
 							</div>
 							<div class="clearfix"></div>
@@ -30,10 +47,10 @@
 						</div>
 					</div>
 					<div class="col-md-7 product-single">
-						<h2 class="product-single-title no-margin">Product 1</h2>
+						<h2 class="product-single-title no-margin"><?php echo $product['title']; ?></h2>
 						<div class="space10"></div>
-						<div class="p-price">&#8377;199.99</div>
-						<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration.</p>
+						<div class="p-price">&#8377;<?php echo $product['price']; ?></div>
+						<p><?php echo $product['description']; ?></p>
 						<div class="product-quantity">
 							<span>Quantity:</span> 
 							<form>
@@ -44,7 +61,7 @@
 							<a href="#" class="button btn-small">Add to Cart</a>
 						</div>
 						<div class="product-meta">
-							<span>Categories: <a href="#">bag</a>, <a href="#">black</a>, <a href="#">darck</a>, <a href="#">sport</a>, <a href="#">ewuipment</a></span><br>
+							<span>Categories: <?php foreach ($categories as $category) { echo $category['title']. ", "; } ?>
 						</div>
 					</div>
 				</div>
@@ -65,23 +82,7 @@
 					<!-- Tab panes -->
 					<div style="height: auto;" class="tab-content tpl-minimal-tabs-cont align-center section-text">
 						<div style="" class="tab-pane fade active in" id="mini-one">
-							<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration.</p>
-							<table class="table tba2">
-								<tbody>
-									<tr>
-										<td>Sizes</td>
-										<td>M, L, XL, XXL</td>
-									</tr>
-									<tr>
-										<td>Prodused in</td>
-										<td>USA</td>
-									</tr>
-									<tr>
-										<td>Material</td>
-										<td>plastic, textile</td>
-									</tr>
-								</tbody>
-							</table>
+							<p><?php echo $product['description']; ?></p>
 						</div>
 						<div style="" class="tab-pane fade" id="mini-two">
 							<div class="col-md-12">
