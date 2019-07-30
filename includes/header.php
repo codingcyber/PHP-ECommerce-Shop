@@ -44,7 +44,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-3 col-xs-5 logo">
-					<a href="shop-home.html"><img src="https://codingcyber.org/wp-content/uploads/2017/09/logo.png" class="img-responsive" alt=""/></a>
+					<a href="index.php"><img src="https://codingcyber.org/wp-content/uploads/2017/09/logo.png" class="img-responsive" alt=""/></a>
 				</div>
 				<div class="col-md-9 col-xs-7">
 					<div class="top-bar">
@@ -56,16 +56,21 @@
 				<div id="mobnav-btn">Menu <i class="fa fa-bars"></i></div>
 				<ul class="sf-menu">
 					<li>
-						<a href="#">Home</a>
+						<a href="index.php">Home</a>
 					</li>
 					<li>
 						<a href="#">Shop</a>
 						<div class="mobnav-subarrow"><i class="fa fa-plus"></i></div>
 						<ul>
-							<li><a href="#">Category1</a></li>
-							<li><a href="#">Category1</a></li>
-							<li><a href="#">Category1</a></li>
-							<li><a href="#">Category1</a></li>
+							<?php 
+								$sql = "SELECT * FROM categories";
+							    $result = $db->prepare($sql);
+							    $result->execute();
+							    $categories = $result->fetchAll(PDO::FETCH_ASSOC);
+							    foreach ($categories as $category) {
+							 ?>
+							<li><a href="category.php?id=<?php echo $category['id']; ?>"><?php echo $category['title']; ?></a></li>
+							<?php } ?>
 						</ul>
 					</li>
 					<li>
