@@ -12,7 +12,7 @@ if(isset($_GET['page']) & !empty($_GET['page'])){
     $curpage = 1;
 }
 
-// get the number of total post from posts table
+// get the number of total categories table
 $sql = "SELECT * FROM categories";
 $result = $db->prepare($sql);
 $result->execute();

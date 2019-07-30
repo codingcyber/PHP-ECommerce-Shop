@@ -2,7 +2,28 @@
 require_once('../includes/connect.php');
 include('includes/check-login.php');
 include('includes/header.php');
-include('includes/navigation.php'); 
+include('includes/navigation.php');
+
+// number of results per page
+$perpage = 2;
+if(isset($_GET['page']) & !empty($_GET['page'])){
+    $curpage = $_GET['page'];
+}else{
+    $curpage = 1;
+}
+
+// get the number of total products from table
+$sql = "SELECT * FROM products";
+$result = $db->prepare($sql);
+$result->execute();
+$totalres = $result->rowCount();
+
+// calculate startpage, nextpage, endpage variables
+$endpage = ceil($totalres/$perpage);
+$startpage = 1;
+$nextpage = $curpage + 1;
+$previouspage = $curpage - 1;
+$start = ($curpage * $perpage) - $perpage; 
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -38,7 +59,7 @@ include('includes/navigation.php');
                             </thead>
                             <tbody>
                                 <?php 
-                                    $sql = "SELECT * FROM products";
+                                    $sql = "SELECT * FROM products LIMIT $start, $perpage";
                                     $result = $db->prepare($sql);
                                     $result->execute();
                                     $res = $result->fetchAll(PDO::FETCH_ASSOC);
@@ -87,6 +108,28 @@ include('includes/navigation.php');
                         </table>
                     </div>
                     <!-- /.table-responsive -->
+                    <ul class="pagination justify-content-center mb-4">
+                        <?php if($curpage != $startpage){ ?>
+                        <li class="page-item">
+                            <a href="?page=<?php echo $startpage; ?>" class="page-link">&laquo; First</a>
+                        </li>
+                        <?php } ?>
+                        <?php if($curpage >= 2){ ?>
+                        <li class="page-item">
+                            <a href="?page=<?php echo $previouspage; ?>" class="page-link"><?php echo $previouspage; ?></a>
+                        </li>
+                        <?php } ?>
+                        <?php if($curpage != $endpage){ ?>
+                        <li class="page-item">
+                            <a href="?page=<?php echo $nextpage; ?>" class="page-link"><?php echo $nextpage; ?></a>
+                        </li>
+                        <?php } ?>
+                        <?php if($curpage != $endpage){ ?>
+                        <li class="page-item">
+                            <a href="?page=<?php echo $endpage; ?>" class="page-link">&raquo; Last</a>
+                        </li>
+                        <?php } ?>
+                    </ul>
                 </div>
                 <!-- /.panel-body -->
             </div>
