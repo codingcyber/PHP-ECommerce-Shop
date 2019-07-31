@@ -1,11 +1,70 @@
 <?php 
 session_start();
 require_once('includes/connect.php');
-include('includes/header.php'); 
+// If LoggedIn Redirect to checkout page 
 if(isset($_POST) & !empty($_POST)){
+	// ***********
+	// Login *****
+	// ***********
 	if($_POST['submit'] == 'Login'){
-		echo "Login";
+		// PHP Form Validations
+	    if(empty($_POST['username'])){ $logerrors[]="User Name / E-Mail field is Required"; }
+	    if(empty($_POST['password'])){ $logerrors[]="Password field is Required"; }
+
+	    // CSRF Token Validation
+	    if(isset($_POST['csrf_token'])){
+	        if($_POST['csrf_token'] === $_SESSION['csrf_token']){
+	        }else{
+	            $logerrors[] = "Problem with CSRF Token Validation";
+	        }
+	    }
+	    // CSRF Token Time Validation
+	    $max_time = 60*60*24; // in seconds
+	    if(isset($_SESSION['csrf_token_time'])){
+	        $token_time = $_SESSION['csrf_token_time'];
+	        if(($token_time + $max_time) >= time() ){
+	        }else{
+	            $logerrors[] = "CSRF Token Expired";
+	            unset($_SESSION['csrf_token']);
+	            unset($_SESSION['csrf_token_time']);
+	        }
+	    }
+
+	    if(empty($errors)){
+	        // Check the Login Credentials
+	        $sql = "SELECT * FROM users WHERE ";
+	        if(filter_var($_POST['username'], FILTER_VALIDATE_EMAIL)){
+	            $sql .= "email=?";
+	        }else{
+	            $sql .= "username=?";
+	        }
+	        $sql .= " AND role='customer'";
+	        $result = $db->prepare($sql);
+	        $result->execute(array($_POST['username']));
+	        $count = $result->rowCount();
+	        $res = $result->fetch(PDO::FETCH_ASSOC);
+	        if($count == 1){
+	            // Compare the password with password hash
+	            if(password_verify($_POST['password'], $res['password'])){
+	                // regenerate session id
+	                session_regenerate_id();
+	                $_SESSION['login'] = true;
+	                $_SESSION['id'] = $res['id'];
+	                $_SESSION['last_login'] = time();
+	                // redirect the user to checkout page
+	                header("location: checkout.php");
+	            }else{
+	                $errors[] = "User Name / E-Mail & Password Combination not Working";
+	            }
+	        }else{
+	            $errors[] = "User Name / E-Mail not Valid";
+	        }
+	    }
 	}
+
+	// ***********
+	// Register***
+	// ***********
 	if($_POST['submit'] == 'Register'){
 		// PHP Form Validations
 	    if(empty($_POST['uname'])){ $regerrors[]="User Name field is Required"; }else{
@@ -71,8 +130,12 @@ if(isset($_POST) & !empty($_POST)){
 	                        );
 	        $res = $result->execute($values) or die(print_r($result->errorInfo(), true));
 	        if($res){
-	        	echo "User Registered";
 	        	// create the session and redirect to checkout page
+	        	// regenerate session id
+                session_regenerate_id();
+                $_SESSION['login'] = true;
+                $_SESSION['id'] = $res['id'];
+                $_SESSION['last_login'] = time();
 	        }
 	    }
 	}
@@ -81,6 +144,7 @@ if(isset($_POST) & !empty($_POST)){
 $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
+include('includes/header.php');
 ?>
 <!-- SHOP CONTENT -->
 <section id="content">
@@ -97,12 +161,22 @@ $_SESSION['csrf_token_time'] = time();
 				<div class="box-content">
 					<h3 class="heading text-center">I'm a Returning Customer</h3>
 					<div class="clearfix space40"></div>
+					<?php
+                        if(!empty($logerrors)){
+                            echo "<div class='alert alert-danger'>";
+                            foreach ($logerrors as $logerror) {
+                                echo "&nbsp;".$logerror."<br>";
+                            }
+                            echo "</div>";
+                        }
+                    ?>
 					<form class="logregform" method="post">
+						<input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
 						<div class="row">
 							<div class="form-group">
 								<div class="col-md-12">
 									<label>Username or E-mail Address</label>
-									<input type="text" name="username" value="" class="form-control">
+									<input type="text" name="username" class="form-control" value="<?php if(isset($_POST['username'])){ echo $_POST['username']; } ?>">
 								</div>
 							</div>
 						</div>
