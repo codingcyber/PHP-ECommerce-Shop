@@ -34,11 +34,10 @@ if(isset($_POST) & !empty($_POST)){
     }
 
     if(empty($errors)){
-    	// Insert the submitted details into users database with customer role
-    	$sql = "INSERT INTO user_address (uid, nickname, fname, lname, address1, address2, city, state, country, zipcode, phone) VALUES (:uid, :nickname, :fname, :lname, :address1, :address2, :city, :state, :country, :zipcode, :phone)";
+    	// Update the address
+    	$sql = "UPDATE user_address SET nickname=:nickname, fname=:fname, lname=:lname, address1=:address1, address2=:address2, city=:city, state=:state, country=:country, zipcode=:zipcode, phone=:phone, updated=NOW() WHERE id=:id";
         $result = $db->prepare($sql);
-        $values = array(':uid'     		=> $_SESSION['id'],
-                        ':nickname'     => $_POST['nickname'],
+        $values = array(':nickname'     => $_POST['nickname'],
                         ':fname'        => $_POST['fname'],
                         ':lname'        => $_POST['lname'],
                         ':address1'     => $_POST['address1'],
@@ -47,11 +46,12 @@ if(isset($_POST) & !empty($_POST)){
                         ':state'        => $_POST['state'],
                         ':country'      => $_POST['country'],
                         ':zipcode'      => $_POST['zipcode'],
-                        ':phone'        => $_POST['phone']
+                        ':phone'        => $_POST['phone'],
+                        ':id'			=> $_POST['id']
                         );
         $res = $result->execute($values) or die(print_r($result->errorInfo(), true));
         if($res){
-        	//echo "Address Added";
+        	//echo "Address Updated";
         	// redirect to My Account Page
         	header('location: my-account.php');
         }
@@ -62,6 +62,11 @@ $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
 include('includes/header.php');
+
+$sql = "SELECT * FROM user_address WHERE id=?";
+$result = $db->prepare($sql);
+$result->execute(array($_GET['id']));
+$address = $result->fetch(PDO::FETCH_ASSOC);
 ?>
 <!-- SHOP CONTENT -->
 <section id="content">
@@ -88,8 +93,9 @@ include('includes/header.php');
 					<div class="space30"></div>
 					<form method="post">
 						<input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
+						<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
 						<label>Address Nick Name</label>
-						<input name="nickname" class="form-control" placeholder="" type="text" value="<?php if(isset($_POST['nickname'])){ echo $_POST['nickname']; } ?>">
+						<input name="nickname" class="form-control" placeholder="" type="text" value="<?php if(isset($address['nickname'])){ echo $address['nickname']; } ?>">
 						<div class="clearfix space20"></div>
 						<label class="">Country </label>
 						<select name="country" class="form-control">
@@ -118,36 +124,36 @@ include('includes/header.php');
 						<div class="row">
 							<div class="col-md-6">
 								<label>First Name </label>
-								<input name="fname" class="form-control" placeholder="" type="text" value="<?php if(isset($_POST['fname'])){ echo $_POST['fname']; } ?>">
+								<input name="fname" class="form-control" placeholder="" type="text" value="<?php if(isset($address['fname'])){ echo $address['fname']; } ?>">
 							</div>
 							<div class="col-md-6">
 								<label>Last Name </label>
-								<input name="lname" class="form-control" placeholder="" type="text" value="<?php if(isset($_POST['lname'])){ echo $_POST['lname']; } ?>">
+								<input name="lname" class="form-control" placeholder="" type="text" value="<?php if(isset($address['lname'])){ echo $address['lname']; } ?>">
 							</div>
 						</div>
 						<div class="clearfix space20"></div>
 						<label>Address </label>
-						<input name="address1" class="form-control" placeholder="Street address" type="text" value="<?php if(isset($_POST['address1'])){ echo $_POST['address1']; } ?>">
+						<input name="address1" class="form-control" placeholder="Street address" type="text" value="<?php if(isset($address['address1'])){ echo $address['address1']; } ?>">
 						<div class="clearfix space20"></div>
-						<input name="address2" class="form-control" placeholder="Apartment, suite, unit etc. (optional)" type="text" value="<?php if(isset($_POST['address2'])){ echo $_POST['address2']; } ?>">
+						<input name="address2" class="form-control" placeholder="Apartment, suite, unit etc. (optional)" type="text" value="<?php if(isset($address['address2'])){ echo $address['address2']; } ?>">
 						<div class="clearfix space20"></div>
 						<div class="row">
 							<div class="col-md-4">
 								<label>Town / City </label>
-								<input name="city" class="form-control" placeholder="Town / City" type="text" value="<?php if(isset($_POST['city'])){ echo $_POST['city']; } ?>">
+								<input name="city" class="form-control" placeholder="Town / City" type="text" value="<?php if(isset($address['city'])){ echo $address['city']; } ?>">
 							</div>
 							<div class="col-md-4">
 								<label>State</label>
-								<input name="state" class="form-control" placeholder="State / County" type="text" value="<?php if(isset($_POST['state'])){ echo $_POST['state']; } ?>">
+								<input name="state" class="form-control" placeholder="State / County" type="text" value="<?php if(isset($address['state'])){ echo $address['state']; } ?>">
 							</div>
 							<div class="col-md-4">
 								<label>Postcode </label>
-								<input name="zipcode" class="form-control" placeholder="Postcode / Zip" type="text" value="<?php if(isset($_POST['zipcode'])){ echo $_POST['zipcode']; } ?>">
+								<input name="zipcode" class="form-control" placeholder="Postcode / Zip" type="text" value="<?php if(isset($address['zipcode'])){ echo $address['zipcode']; } ?>">
 							</div>
 						</div>
 						<div class="clearfix space20"></div>
 						<label>Phone Number</label>
-						<input name="phone" class="form-control" placeholder="Phone Number" type="number" value="<?php if(isset($_POST['phone'])){ echo $_POST['phone']; } ?>">
+						<input name="phone" class="form-control" placeholder="Phone Number" type="number" value="<?php if(isset($address['phone'])){ echo $address['phone']; } ?>">
 						<div class="clearfix space20"></div>
 						<input type="submit" value="Submit" class="button btn-lg" />
 					</form>
