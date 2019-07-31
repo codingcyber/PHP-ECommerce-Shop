@@ -1,4 +1,10 @@
-<?php include('includes/header.php'); ?>
+<?php 
+session_start();
+require_once('includes/connect.php');
+// check user login - customer
+require_once('includes/check-login.php');
+include('includes/header.php'); 
+?>
 <!-- SHOP CONTENT -->
 <section id="content">
 	<div class="content-blog">
