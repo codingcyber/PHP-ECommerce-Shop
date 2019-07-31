@@ -122,7 +122,7 @@ if(isset($_POST) & !empty($_POST)){
 	    }
 
 	    if(empty($regerrors)){
-	    	// Insert the submistted details into users database with customer role
+	    	// Insert the submitted details into users database with customer role
 	    	$sql = "INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, 'customer')";
 	        $result = $db->prepare($sql);
 	        $values = array(':username'     => $_POST['uname'],
