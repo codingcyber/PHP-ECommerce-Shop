@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
 <!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
@@ -86,42 +85,49 @@
 					</li>
 				</ul>
 				<div class="header-xtra">
+					<?php 
+						if(isset($_SESSION['cart'])){
+							$cart = $_SESSION['cart'];
+							$total = 0;
+					 ?>
 					<div class="s-cart">
 						<div class="sc-ico"><i class="fa fa-shopping-cart"></i><em>2</em></div>
 
 						<div class="cart-info">
-							<small>You have <em class="highlight">2 item(s)</em> in your shopping bag</small>
+							<small>You have <em class="highlight"><?php echo count($cart); ?> item(s)</em> in your shopping bag</small>
 							<br>
 							<br>
+							<?php 
+								$total = 0;
+								foreach ($cart as $key => $value) {
+								// key is id and value is qunatity
+								$sql = "SELECT * FROM products WHERE id=?";
+							    $result = $db->prepare($sql);
+							    $result->execute(array($key));
+							    $prod = $result->fetch(PDO::FETCH_ASSOC);
+							 ?>
 							<div class="ci-item">
-								<img src="images/shop/2.jpg" width="70" alt=""/>
+								<img src="<?php echo $prod['image']; ?>" width="70" alt=""/>
 								<div class="ci-item-info">
-									<h5><a href="./single-product.html">Product fashion</a></h5>
-									<p>2 x &#8377;250.00</p>
+									<h5><a href="product.php?id=<?php echo $prod['id']; ?>"><?php echo $prod['title']; ?></a></h5>
+									<p><?php echo $value['quantity']; ?> x &#8377;<?php echo $prod['price']; ?></p>
 									<div class="ci-edit">
-										<a href="#" class="edit fa fa-edit"></a>
-										<a href="#" class="edit fa fa-trash"></a>
+										<!-- <a href="#" class="edit fa fa-edit"></a> -->
+										<a href="del-cart.php?id=<?php echo $key; ?>" class="edit fa fa-trash"></a>
 									</div>
 								</div>
 							</div>
-							<div class="ci-item">
-								<img src="images/shop/8.jpg" width="70" alt=""/>
-								<div class="ci-item-info">
-									<h5><a href="./single-product.html">Product fashion</a></h5>
-									<p>2 x &#8377;250.00</p>
-									<div class="ci-edit">
-										<a href="#" class="edit fa fa-edit"></a>
-										<a href="#" class="edit fa fa-trash"></a>
-									</div>
-								</div>
-							</div>
-							<div class="ci-total">Subtotal: &#8377;750.00</div>
+							<?php 
+							$total = $total + ($prod['price']*$value['quantity']);
+						} ?>
+							<div class="ci-total">Subtotal: &#8377;<?php if(!empty($total)){ echo $total; }else{ echo "0"; } ?></div>
 							<div class="cart-btn">
-								<a href="#">View Bag</a>
-								<a href="#">Checkout</a>
+								<a href="cart.php">View Bag</a>
+								<a href="checkout.php">Checkout</a>
 							</div>
 						</div>
 					</div>
+					<?php } ?>
 					<div class="s-search">
 						<div class="ss-ico"><i class="fa fa-search"></i></div>
 						<div class="search-block">

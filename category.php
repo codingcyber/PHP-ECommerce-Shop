@@ -1,4 +1,5 @@
 <?php 
+session_start();
 require_once('includes/connect.php');
 if(isset($_GET['id']) & !empty($_GET['id'])){
 	// Fetching Category Name
