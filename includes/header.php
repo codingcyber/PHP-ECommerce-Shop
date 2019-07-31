@@ -84,7 +84,7 @@
 						<a href="#">My Account</a>
 						<div class="mobnav-subarrow"><i class="fa fa-plus"></i></div>
 						<ul>
-							<li><a href="my-account">My Account</a></li>
+							<li><a href="my-account.php">My Account</a></li>
 							<li><a href="orders.php">My Orders</a></li>
 							<li><a href="logout.php">Logout</a></li>
 						</ul>
