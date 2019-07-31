@@ -56,11 +56,39 @@ if(isset($_POST) & !empty($_POST)){
                         );
         $orderres = $orderresult->execute($values) or die(print_r($result->errorInfo(), true));
         if($orderres){
-        	$messages[] = 'Order Placed';
+        	//$messages[] = 'Order Placed';
         	echo $orderid = $db->lastInsertID();
         	// Insert the Product Items into order_items table with Order Id
+        	foreach ($cart as $key => $value) {
+				// key is id and value is qunatity
+				$productsql = "SELECT * FROM products WHERE id=?";
+			    $productresult = $db->prepare($productsql);
+			    $productresult->execute(array($key));
+			    $productres = $productresult->fetch(PDO::FETCH_ASSOC);
 
+			    $orderitemsql = "INSERT INTO order_items (pid, orderid, product_price, product_quantity) VALUES (:pid, :orderid, :product_price, :product_quantity)";
+		        $orderitemresult = $db->prepare($orderitemsql);
+		        $values = array(':pid'     			=> $productres['id'],
+		                        ':orderid'     		=> $orderid,
+		                        ':product_price'    => $productres['price'],
+		                        ':product_quantity' => $value['quantity']
+		                        );
+		        $orderitemres = $orderitemresult->execute($values) or die(print_r($result->errorInfo(), true));
+			    
+			}
     		// Insert the Order_status with order id
+    		$orderstatussql = "INSERT INTO order_status (orderid, status, notes) VALUES (:orderid, :status, :notes)";
+	        $orderstatusresult = $db->prepare($orderstatussql);
+	        $values = array(':orderid'     		=> $orderid,
+	                        ':status'     		=> 'Order Placed',
+	                        ':notes'       		=> $_POST['ordernotes']
+	                        );
+	        $orderstatusres = $orderstatusresult->execute($values) or die(print_r($result->errorInfo(), true));
+	        if($orderstatusres){
+	        	// remove items from cart session and redirect to my account page
+	        	unset($_SESSION['cart']);
+	        	header('location: my-account.php');
+	        }
         }
     }
 }
