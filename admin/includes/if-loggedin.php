@@ -4,7 +4,7 @@
 if(basename($_SERVER['PHP_SELF']) == 'login.php'){
 	if(isset($_SESSION['id']) & !empty($_SESSION['id'])){
 		// redirect to dashboard page
-		header('location: http://localhost/PHP-ECommerce-Shop/admin/dashboard.php');
+		//header('location: http://localhost/PHP-ECommerce-Shop/admin/dashboard.php');
 		$sql = "SELECT * FROM users WHERE id=?";
 		$result = $db->prepare($sql);
 		$result->execute(array($_SESSION['id']));
@@ -12,9 +12,9 @@ if(basename($_SERVER['PHP_SELF']) == 'login.php'){
 		if($user['role'] == 'admin'){
 			// redirect to admin dashboard page
 			header('location: http://localhost/PHP-ECommerce-Shop/admin/dashboard.php');
-		}else{
+		}elseif($user['role'] == 'customer'){
 			// redirect to shop home page
-			header('location: http://localhost/PHP-ECommerce-Shop/index.php');
+			header('location: http://localhost/PHP-ECommerce-Shop/checkout.php');
 		}
 	}
 }

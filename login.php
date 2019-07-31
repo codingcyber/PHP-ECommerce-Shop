@@ -1,7 +1,8 @@
 <?php 
 session_start();
 require_once('includes/connect.php');
-// If LoggedIn Redirect to checkout page 
+// If LoggedIn Redirect to checkout page
+include('admin/includes/if-loggedin.php'); 
 if(isset($_POST) & !empty($_POST)){
 	// ***********
 	// Login *****

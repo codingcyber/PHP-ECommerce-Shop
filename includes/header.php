@@ -72,14 +72,24 @@
 							<?php } ?>
 						</ul>
 					</li>
+					<?php 
+						if(isset($_SESSION['id']) & !empty($_SESSION['id'])){
+							$sql = "SELECT * FROM users WHERE id=?";
+							$result = $db->prepare($sql);
+							$result->execute(array($_SESSION['id']));
+							$user = $result->fetch(PDO::FETCH_ASSOC);
+							if($user['role'] == 'customer'){
+					 ?>
 					<li>
 						<a href="#">My Account</a>
 						<div class="mobnav-subarrow"><i class="fa fa-plus"></i></div>
 						<ul>
-							<li><a href="#">My Orders</a></li>
-							<li><a href="#">Logout</a></li>
+							<li><a href="my-account">My Account</a></li>
+							<li><a href="orders.php">My Orders</a></li>
+							<li><a href="logout.php">Logout</a></li>
 						</ul>
 					</li>
+					<?php } } ?>
 					<li>
 						<a href="#">Contact</a>
 					</li>

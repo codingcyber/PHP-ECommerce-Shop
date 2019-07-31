@@ -45,7 +45,7 @@ include('includes/header.php');
 						<a href="product.php?id=<?php echo $product['id']; ?>"><img src="<?php echo $product['image']; ?>" alt="" height="90" width="90"></a>					
 					</td>
 					<td>
-						<a href="#"><?php echo $product['title']; ?></a>					
+						<a href="product.php?id=<?php echo $product['id']; ?>"><?php echo $product['title']; ?></a>					
 					</td>
 					<td>
 						<span class="amount">&#8377;<?php echo $product['price']; ?></span>					
