@@ -3,6 +3,12 @@ session_start();
 require_once('includes/connect.php');
 // check user login - customer
 require_once('includes/check-login.php');
+// fetch orders from orders table and order_status table based on loggedin user session id
+
+$sql = "SELECT o.id, o.created, os.status, o.amount FROM orders o JOIN order_status os ON o.id=os.orderid WHERE o.uid=?";
+$result = $db->prepare($sql);
+$result->execute(array($_SESSION['id']));
+$orders = $result->fetchAll(PDO::FETCH_ASSOC);
 include('includes/header.php'); 
 ?>
 <!-- SHOP CONTENT -->
@@ -28,57 +34,31 @@ include('includes/header.php');
 				</tr>
 			</thead>
 			<tbody>
+				<?php 
+					foreach ($orders as $order) {
+						$sql = "SELECT * FROM order_items WHERE orderid=?";
+						$result = $db->prepare($sql);
+						$result->execute(array($order['id']));
+						$itemscount = $result->rowCount();
+				 ?>
 				<tr>
 					<td>
-						900
+						<?php echo $order['id']; ?>
 					</td>
 					<td>
-						June 15, 2015
+						<?php echo $order['created']; ?>
 					</td>
 					<td>
-						Delivered			
+						<?php echo $order['status']; ?>			
 					</td>
 					<td>
-						&#8377;173 for 4 items				
+						&#8377;<?php echo $order['amount']; ?> for <?php echo $itemscount; ?> items				
 					</td>
 					<td>
-						<a href="#">View</a>
+						<a href="view-order.php?id=<?php echo $order['id']; ?>">View</a>
 					</td>
 				</tr>
-				<tr>
-					<td>
-						873
-					</td>
-					<td>
-						June 02, 2015
-					</td>
-					<td>
-						Delivered			
-					</td>
-					<td>
-						&#8377;55 for 2 items				
-					</td>
-					<td>
-						<a href="#">View</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						629
-					</td>
-					<td>
-						March 23, 2015
-					</td>
-					<td>
-						Delivered			
-					</td>
-					<td>
-						&#8377;599 for 14 items				
-					</td>
-					<td>
-						<a href="#">View</a>
-					</td>
-				</tr>
+				<?php } ?>
 			</tbody>
 		</table>		
 
