@@ -51,15 +51,16 @@ include('includes/header.php');
 						<div class="space10"></div>
 						<div class="p-price">&#8377;<?php echo $product['price']; ?></div>
 						<p><?php echo $product['description']; ?></p>
-						<div class="product-quantity">
-							<span>Quantity:</span> 
-							<form>
-								<input type="text" placeholder="1">
-							</form>
-						</div>
-						<div class="shop-btn-wrap">
-							<a href="#" class="button btn-small">Add to Cart</a>
-						</div>
+						<form method="get" action="add-to-cart.php">
+							<div class="product-quantity">
+								<span>Quantity:</span>
+								<input type="hidden" name="id" value="<?php echo $product['id']; ?>"> 
+								<input type="number" name="quant" placeholder="1">
+							</div>
+							<div class="shop-btn-wrap">
+								<input type="submit" class="button btn-small" value="Add to Cart" />
+							</div>
+						</form>
 						<div class="product-meta">
 							<span>Categories: <?php foreach ($categories as $category) { echo $category['title']. ", "; } ?>
 						</div>
