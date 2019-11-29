@@ -89,7 +89,11 @@
 							<li><a href="logout.php">Logout</a></li>
 						</ul>
 					</li>
-					<?php } } ?>
+					<?php } }else{ ?>
+					<li>
+						<a href="login.php">Login / Register</a>
+					</li>
+					<?php } ?>
 					<li>
 						<a href="#">Contact</a>
 					</li>
