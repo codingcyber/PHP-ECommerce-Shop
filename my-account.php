@@ -5,7 +5,7 @@ require_once('includes/connect.php');
 require_once('includes/check-login.php');
 // fetch orders from orders table and order_status table based on loggedin user session id
 
-$sql = "SELECT o.id, o.created, os.status, o.amount FROM orders o JOIN order_status os ON o.id=os.orderid WHERE o.uid=?";
+$sql = "SELECT id, created, amount FROM orders WHERE uid=?";
 $result = $db->prepare($sql);
 $result->execute(array($_SESSION['id']));
 $orders = $result->fetchAll(PDO::FETCH_ASSOC);
@@ -40,6 +40,11 @@ include('includes/header.php');
 						$result = $db->prepare($sql);
 						$result->execute(array($order['id']));
 						$itemscount = $result->rowCount();
+
+						$sql = "SELECT * FROM order_status WHERE orderid=? ORDER BY id DESC LIMIT 1";
+						$result = $db->prepare($sql);
+						$result->execute(array($order['id']));
+						$status = $result->fetch(PDO::FETCH_ASSOC);
 				 ?>
 				<tr>
 					<td>
@@ -49,7 +54,7 @@ include('includes/header.php');
 						<?php echo $order['created']; ?>
 					</td>
 					<td>
-						<?php echo $order['status']; ?>			
+						<?php echo $status['status']; ?>			
 					</td>
 					<td>
 						&#8377;<?php echo $order['amount']; ?> for <?php echo $itemscount; ?> items				
