@@ -2,20 +2,21 @@
 require_once('../includes/connect.php');
 include('includes/check-login.php'); 
 if(isset($_POST) & !empty($_POST)){
-    print_r($_POST);
     // PHP Form Validations
-    if(empty($_POST['title'])){ $errors[] = "Title field is Required";}
-    if(empty($_POST['slug'])){ $slug = trim($_POST['title']); }else{ $slug = trim($_POST['slug']); }
-    // check slug in unique with db Query
-    $search = array(' ', ',', '.', '_');
-    $slug = strtolower(str_replace($search, '-', $slug));
-    $sql = "SELECT * FROM categories WHERE slug=?";
-    $result = $db->prepare($sql);
-    $result->execute(array($slug));
-    $count = $result->rowCount();
-    if($count == 1){
-        $errors[] = 'Slug already exists in database';
+    if(empty($_POST['code'])){ $errors[] = "Coupon Code is Required";}else{
+        // check the coupon code in unique
+        $sql = "SELECT * FROM coupons WHERE coupon_code=?";
+        $result = $db->prepare($sql);
+        $result->execute(array($_POST['code']));
+        $count = $result->rowCount();
+        if($count == 1){
+            $errors[] = 'Coupon Code already exists in database';
+        }
     }
+    if(empty($_POST['type'])){ $errors[] = "Coupon Type is Required";}
+    if(empty($_POST['discount'])){ $errors[] = "Coupon Discount Value is Required";}
+    if(empty($_POST['limit'])){ $errors[] = "Coupon Limit is Required";}
+    if(empty($_POST['expiry'])){ $errors[] = "Coupon Expiry Date is Required";}
 
     // CSRF Token Validation
     if(isset($_POST['csrf_token'])){
@@ -43,17 +44,21 @@ if(isset($_POST) & !empty($_POST)){
 
     if(empty($errors)){
         // Insert into categories table
-        $sql = "INSERT INTO categories (title, description, slug) VALUES (:title, :description, :slug)";
+        $sql = "INSERT INTO coupons (coupon_code, type, description, terms, coupon_value, coupon_limit, coupon_expiry) VALUES (:coupon_code, :type, :description, :terms, :coupon_value, :coupon_limit, :coupon_expiry)";
         $result = $db->prepare($sql);
-        $values = array(':title'        => $_POST['title'],
-                        ':description'  => $_POST['description'],
-                        ':slug'         => $slug
+        $values = array(':coupon_code'      => strtoupper($_POST['code']),
+                        ':type'             => $_POST['type'],
+                        ':description'      => $_POST['description'],
+                        ':terms'            => $_POST['terms'],
+                        ':coupon_value'     => $_POST['discount'],
+                        ':coupon_limit'     => $_POST['limit'],
+                        ':coupon_expiry'    => $_POST['expiry']
                         );
         $res = $result->execute($values);
         if($res){
-            header('location: view-categories.php');
+            header('location: view-coupons.php');
         }else{
-            $errors[] = "Failed to Add Category";
+            $errors[] = "Failed to Add Coupon";
         }
     }
 }

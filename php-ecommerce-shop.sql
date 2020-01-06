@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2019 at 11:30 AM
+-- Generation Time: Jan 06, 2020 at 04:14 PM
 -- Server version: 10.3.15-MariaDB
 -- PHP Version: 7.1.30
 
@@ -12,17 +12,9 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Database: `php-ecommerce-shop`
 --
-CREATE DATABASE IF NOT EXISTS `php-ecommerce-shop` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `php-ecommerce-shop`;
 
 -- --------------------------------------------------------
 
@@ -42,6 +34,40 @@ CREATE TABLE `categories` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `coupons`
+--
+
+CREATE TABLE `coupons` (
+  `id` int(11) NOT NULL,
+  `coupon_code` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `terms` varchar(255) NOT NULL,
+  `coupon_value` varchar(255) NOT NULL,
+  `coupon_limit` varchar(255) NOT NULL,
+  `coupon_expiry` date NOT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coupon_redemptions`
+--
+
+CREATE TABLE `coupon_redemptions` (
+  `id` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `oid` int(11) NOT NULL,
+  `cid` int(11) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -51,8 +77,8 @@ CREATE TABLE `orders` (
   `add_id` int(11) NOT NULL,
   `amount` varchar(255) NOT NULL,
   `paymentmethod` varchar(255) NOT NULL,
-  `coupon` varchar(255) NOT NULL,
-  `discount` varchar(255) NOT NULL,
+  `coupon` varchar(255) DEFAULT NULL,
+  `discount` varchar(255) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
   `updated` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -65,7 +91,7 @@ CREATE TABLE `orders` (
 
 CREATE TABLE `order_items` (
   `id` int(11) NOT NULL,
-  `oid` int(11) NOT NULL,
+  `orderid` int(11) NOT NULL,
   `pid` int(11) NOT NULL,
   `product_price` varchar(255) NOT NULL,
   `product_quantity` varchar(255) NOT NULL,
@@ -81,7 +107,7 @@ CREATE TABLE `order_items` (
 
 CREATE TABLE `order_status` (
   `id` int(11) NOT NULL,
-  `oid` int(11) NOT NULL,
+  `orderid` int(11) NOT NULL,
   `status` varchar(255) NOT NULL,
   `notes` varchar(255) NOT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
@@ -161,7 +187,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `mobile` varchar(255) NOT NULL,
+  `mobile` varchar(255) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `role` varchar(255) NOT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
@@ -199,6 +225,19 @@ CREATE TABLE `user_address` (
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `coupons`
+--
+ALTER TABLE `coupons`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `coupon_code` (`coupon_code`);
+
+--
+-- Indexes for table `coupon_redemptions`
+--
+ALTER TABLE `coupon_redemptions`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -266,6 +305,18 @@ ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `coupons`
+--
+ALTER TABLE `coupons`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `coupon_redemptions`
+--
+ALTER TABLE `coupon_redemptions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
@@ -319,7 +370,3 @@ ALTER TABLE `users`
 ALTER TABLE `user_address`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
