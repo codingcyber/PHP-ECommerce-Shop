@@ -2,6 +2,25 @@
 session_start();
 require_once('includes/connect.php');
 include('includes/header.php'); 
+if(isset($_POST) & !empty($_POST)){
+	$sql = "SELECT * FROM coupons WHERE coupon_code=?";
+	$result = $db->prepare($sql);
+	$result->execute(array($_POST['coupon']));
+	$count = $result->rowCount();
+	$coupon = $result->fetch(PDO::FETCH_ASSOC);
+	if($count == 1){
+		// create the sesison with coupon_code
+		$_SESSION['coupon']	= $coupon['coupon_code'];
+	}else{
+		$couponerrors[] = "Invalid Coupon Code";
+	}
+}elseif(isset($_SESSION['coupon'])){
+	$sql = "SELECT * FROM coupons WHERE coupon_code=?";
+	$result = $db->prepare($sql);
+	$result->execute(array($_SESSION['coupon']));
+	$count = $result->rowCount();
+	$coupon = $result->fetch(PDO::FETCH_ASSOC);
+}
 ?>
 <!-- SHOP CONTENT -->
 <section id="content">
@@ -13,7 +32,11 @@ include('includes/header.php');
 					<p>Checkout these items to Place the Order</p>
 				</div>
 				<div class="col-md-12">
-
+		<pre>
+		<?php
+			print_r($_SESSION);
+		?>
+		</pre>
 		<table class="cart-table table table-bordered">
 			<thead>
 				<tr>
@@ -63,10 +86,38 @@ include('includes/header.php');
 				<tr>
 					<td colspan="6" class="actions">
 						<div class="col-md-6">
-							<!-- <div class="coupon">
-								<label>Coupon:</label><br>
-								<input placeholder="Coupon code" type="text"> <button type="submit">Apply</button>
-							</div> -->
+							<div class="coupon">
+								<form method="post">
+									<label>Coupon:</label><br>
+									<input name="coupon" placeholder="Coupon code" type="text" value="<?php if(isset($count)){ if($count == 1){ echo $coupon['coupon_code']; } } ?>"> <button type="submit">Apply</button>
+								</form>
+							<?php
+			                    if(!empty($couponerrors)){
+			                        echo "<div class='alert alert-danger'>";
+			                        foreach ($couponerrors as $couponerror) {
+			                            echo "<span class='glyphicon glyphicon-remove'></span>&nbsp;". $couponerror . "<br>";
+			                        }
+			                        echo "</div>";
+			                    }
+			                ?>
+			                <small>
+			                <?php
+			                if(isset($count)){
+			                	if($count == 1){
+			                		echo "Coupon Type : " . $coupon['type'] . "<br>";
+			                		if($coupon['type'] == 'percentage'){
+			                			echo "Coupon Value : " . $coupon['coupon_value'] . "%<br>";
+			                		}elseif($coupon['type'] == 'flat-rate'){
+			                			echo "Coupon Value : &#8377;" . $coupon['coupon_value'] . "<br>";
+			                		}
+			                		
+			                		echo "Description : " . $coupon['description'] . "<br>";
+			                		echo "Terms : " . $coupon['terms'] . "<br>";
+			                	}
+			                }
+			                ?>
+			                </div>
+			                </small>
 						</div>
 						<div class="col-md-6">
 							<div class="cart-btn">
@@ -92,6 +143,12 @@ include('includes/header.php');
 							<th>Shipping and Handling</th>
 							<td>
 								Free Shipping				
+							</td>
+						</tr>
+						<tr>
+							<th>Discount</th>
+							<td>
+								&#8377; 50				
 							</td>
 						</tr>
 						<tr>
