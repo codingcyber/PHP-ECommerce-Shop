@@ -89,7 +89,10 @@ if(isset($_POST) & !empty($_POST)){
 							<div class="coupon">
 								<form method="post">
 									<label>Coupon:</label><br>
-									<input name="coupon" placeholder="Coupon code" type="text" value="<?php if(isset($count)){ if($count == 1){ echo $coupon['coupon_code']; } } ?>"> <button type="submit">Apply</button>
+									<input name="coupon" placeholder="Coupon code" type="text" value="<?php if(isset($count)){ if($count == 1){ echo $coupon['coupon_code']; } } ?>"> <button type="submit">Apply</button> 
+									<?php if(isset($count)){ if($count == 1){ ?>
+									<a href="remove-coupon.php">Remove</a>
+									<?php } } ?>
 								</form>
 							<?php
 			                    if(!empty($couponerrors)){
@@ -148,7 +151,18 @@ if(isset($_POST) & !empty($_POST)){
 						<tr>
 							<th>Discount</th>
 							<td>
-								&#8377; 50				
+								<?php 
+									if($coupon['type'] == 'percentage'){
+										//(coupon value / 100) * total
+										$discount = ($coupon['coupon_value']/100) * $total;
+										$total = $total - $discount;
+
+									}elseif($coupon['type'] == 'flat-rate'){
+										$discount = $coupon['coupon_value'];
+										$total = $total - $discount;
+									}
+								?>
+								&#8377; <?php echo $discount; ?>				
 							</td>
 						</tr>
 						<tr>
