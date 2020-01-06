@@ -104,6 +104,18 @@
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Coupons<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="add-coupon.php">Add Coupon</a>
+                                </li>
+                                <li>
+                                    <a href="view-coupons.php">View Coupons</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Payments<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
