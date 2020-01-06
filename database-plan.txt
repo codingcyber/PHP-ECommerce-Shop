@@ -101,3 +101,21 @@ order_status
 reviews
 
 coupons
+-id
+-coupon_code - unique
+-type - percentage, flat rate
+-description
+-terms
+-coupon_value
+-coupon_limit
+-coupon_expiry
+-created
+-updated
+
+coupon_redemptions
+-id
+-cid
+-uid
+-oid
+-created
+-updated
