@@ -144,6 +144,10 @@ if(isset($_POST) & !empty($_POST)){
 								Free Shipping				
 							</td>
 						</tr>
+						<?php 
+							if(isset($count)){
+		                	if($count == 1){ 
+		                ?>
 						<tr>
 							<th>Discount</th>
 							<td>
@@ -161,6 +165,7 @@ if(isset($_POST) & !empty($_POST)){
 								&#8377; <?php echo $discount; ?>				
 							</td>
 						</tr>
+						<?php } } ?>
 						<tr>
 							<th>Order Total</th>
 							<td><strong><span class="amount">&#8377;<?php if(!empty($total)){ echo $total; }else{ echo "0"; } ?></span></strong> </td>

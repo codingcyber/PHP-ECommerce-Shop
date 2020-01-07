@@ -48,17 +48,40 @@ if(isset($_POST) & !empty($_POST)){
 		    $total = $total + ($product['price']*$value['quantity']);
 		}
 
-		$ordersql = "INSERT INTO orders (uid, add_id, amount, paymentmethod) VALUES (:uid, :add_id, :amount, :paymentmethod)";
+		if(isset($_SESSION['coupon'])){
+			$sql = "SELECT * FROM coupons WHERE coupon_code=? AND DATE(coupon_expiry) >= $date";
+			$result = $db->prepare($sql);
+			$result->execute(array($_SESSION['coupon']));
+			$count = $result->rowCount();
+			$coupon = $result->fetch(PDO::FETCH_ASSOC);
+			if($coupon['type'] == 'percentage'){
+				//(coupon value / 100) * total
+				$discount = ($coupon['coupon_value']/100) * $total;
+
+			}elseif($coupon['type'] == 'flat-rate'){
+				$discount = $coupon['coupon_value'];
+			}
+		}
+
+		$ordersql = "INSERT INTO orders (uid, add_id, amount, paymentmethod";
+		if(isset($_SESSION['coupon'])){$ordersql .= ", coupon, discount";}
+		$ordersql .= ") VALUES (:uid, :add_id, :amount, :paymentmethod";
+		if(isset($_SESSION['coupon'])){$ordersql .= ", :coupon, :discount";}
+		$ordersql .= ")";
         $orderresult = $db->prepare($ordersql);
         $values = array(':uid'     			=> $_SESSION['id'],
                         ':add_id'     		=> $_POST['address'],
                         ':amount'       	=> $total,
                         ':paymentmethod'    => $_POST['payment']
                         );
-        $orderres = $orderresult->execute($values) or die(print_r($result->errorInfo(), true));
+        if(isset($_SESSION['coupon'])){
+        	$values[':coupon'] = $coupon['coupon_code'];
+        	$values[':discount'] = $discount; 
+        }
+        $orderres = $orderresult->execute($values) or die(print_r($orderresult->errorInfo(), true));
         if($orderres){
         	//$messages[] = 'Order Placed';
-        	echo $orderid = $db->lastInsertID();
+        	$orderid = $db->lastInsertID();
         	// Insert the Product Items into order_items table with Order Id
         	foreach ($cart as $key => $value) {
 				// key is id and value is qunatity
@@ -74,9 +97,29 @@ if(isset($_POST) & !empty($_POST)){
 		                        ':product_price'    => $productres['price'],
 		                        ':product_quantity' => $value['quantity']
 		                        );
-		        $orderitemres = $orderitemresult->execute($values) or die(print_r($result->errorInfo(), true));
+		        $orderitemres = $orderitemresult->execute($values) or die(print_r($orderitemresult->errorInfo(), true));
 			    
 			}
+
+			if(isset($_SESSION['coupon'])){
+		        // Insert into coupon_redemptions table
+		        $couponsql = "INSERT INTO coupon_redemptions (cid, `oid`, uid) VALUES (:cid, :orderid, :uid)";
+		        $couponresult = $db->prepare($couponsql);
+		        $values = array(':cid'   	=> $coupon['id'],
+		                        ':orderid'	=> $orderid,
+		                        ':uid'    	=> $_SESSION['id']
+		                        );
+		        $couponres = $couponresult->execute($values) or die(print_r($couponresult->errorInfo(), true));
+
+		        // update coupon limit number by decrementing
+		        $coupon_limit = $coupon['coupon_limit'] - 1;
+		        $updsql = "UPDATE coupons SET coupon_limit=:coupon_limit, updated=NOW() WHERE id=:id";
+		        $updresult = $db->prepare($updsql);
+		        $values = array(':coupon_limit'	=> $coupon_limit,
+		                        ':id'       => $coupon['id']
+		                        );
+		        $updres = $updresult->execute($values) or die(print_r($updresult->errorInfo(), true));
+	    	}
     		// Insert the Order_status with order id
     		$orderstatussql = "INSERT INTO order_status (orderid, status, notes) VALUES (:orderid, :status, :notes)";
 	        $orderstatusresult = $db->prepare($orderstatussql);
@@ -88,6 +131,7 @@ if(isset($_POST) & !empty($_POST)){
 	        if($orderstatusres){
 	        	// remove items from cart session and redirect to my account page
 	        	unset($_SESSION['cart']);
+	        	unset($_SESSION['coupon']);
 	        	header('location: my-account.php');
 	        }
         }
