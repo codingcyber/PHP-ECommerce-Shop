@@ -2,8 +2,9 @@
 session_start();
 require_once('includes/connect.php');
 include('includes/header.php'); 
+$date = date("Y-m-d");
 if(isset($_POST) & !empty($_POST)){
-	$sql = "SELECT * FROM coupons WHERE coupon_code=?";
+	$sql = "SELECT * FROM coupons WHERE coupon_code=? AND DATE(coupon_expiry) >= $date";
 	$result = $db->prepare($sql);
 	$result->execute(array($_POST['coupon']));
 	$count = $result->rowCount();
@@ -12,10 +13,10 @@ if(isset($_POST) & !empty($_POST)){
 		// create the sesison with coupon_code
 		$_SESSION['coupon']	= $coupon['coupon_code'];
 	}else{
-		$couponerrors[] = "Invalid Coupon Code";
+		$couponerrors[] = "Invalid/Expired Coupon Code";
 	}
 }elseif(isset($_SESSION['coupon'])){
-	$sql = "SELECT * FROM coupons WHERE coupon_code=?";
+	$sql = "SELECT * FROM coupons WHERE coupon_code=? AND DATE(coupon_expiry) >= $date";
 	$result = $db->prepare($sql);
 	$result->execute(array($_SESSION['coupon']));
 	$count = $result->rowCount();
@@ -32,11 +33,6 @@ if(isset($_POST) & !empty($_POST)){
 					<p>Checkout these items to Place the Order</p>
 				</div>
 				<div class="col-md-12">
-		<pre>
-		<?php
-			print_r($_SESSION);
-		?>
-		</pre>
 		<table class="cart-table table table-bordered">
 			<thead>
 				<tr>

@@ -3,6 +3,7 @@ session_start();
 require_once('includes/connect.php');
 // check user login - customer
 require_once('includes/check-login.php'); 
+$date = date("Y-m-d");
 if(isset($_SESSION['cart'])){
 
 }else{
@@ -175,6 +176,33 @@ include('includes/header.php');
 						Free Shipping				
 					</td>
 				</tr>
+				<?php 
+				if(isset($_SESSION['coupon'])){
+					$sql = "SELECT * FROM coupons WHERE coupon_code=? AND DATE(coupon_expiry) >= $date";
+					$result = $db->prepare($sql);
+					$result->execute(array($_SESSION['coupon']));
+					$count = $result->rowCount();
+					$coupon = $result->fetch(PDO::FETCH_ASSOC);
+				?>
+				<tr>
+					<th>Discount <small>(<?php echo $coupon['coupon_code']; ?>)</small></th>
+					<td>
+						<?php 
+							if($coupon['type'] == 'percentage'){
+								//(coupon value / 100) * total
+								$discount = ($coupon['coupon_value']/100) * $total;
+								$total = $total - $discount;
+
+							}elseif($coupon['type'] == 'flat-rate'){
+								$discount = $coupon['coupon_value'];
+								$total = $total - $discount;
+							}
+						?>
+						&#8377; <?php echo $discount; ?>				
+					</td>
+				</tr>
+				<?php } ?>
+
 				<tr>
 					<th>Order Total</th>
 					<td><strong><span class="amount">&#8377;<?php echo $total; ?></span></strong> </td>
