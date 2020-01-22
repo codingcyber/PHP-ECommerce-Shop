@@ -119,3 +119,9 @@ coupon_redemptions
 -oid
 -created
 -updated
+
+wishlist
+-id
+-pid
+-uid
+-timestamp

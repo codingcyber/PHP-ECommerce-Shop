@@ -59,7 +59,8 @@ include('includes/header.php');
 								<input type="number" name="quant" placeholder="1">
 							</div>
 							<div class="shop-btn-wrap">
-								<input type="submit" class="button btn-small" value="Add to Cart" />
+								<input type="submit" class="button btn-small" value="Add to Cart" /><br>
+								<a href="add-to-wishlist.php?id=<?php echo $product['id']; ?>" class="button btn-small" >Add to Wishlist</a>
 							</div>
 						</form>
 						<div class="product-meta">
