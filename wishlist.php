@@ -54,6 +54,7 @@ $res = $result->fetchAll(PDO::FETCH_ASSOC);
 									</div>
 									<h2 class="product-title"><a href="#"><?php echo $product['title']; ?></a></h2>
 									<div class="product-price">&#8377;<?php echo $product['price']; ?></div>
+									<a href="delete-wishlist-item.php?id=<?php echo $product['id']; ?>" class="button btn-small" >Remove Items from Wishlist</a>
 								</div>
 							</div>
 							<?php } ?>

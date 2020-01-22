@@ -85,7 +85,7 @@
 						<div class="mobnav-subarrow"><i class="fa fa-plus"></i></div>
 						<ul>
 							<li><a href="my-account.php">My Account</a></li>
-							<li><a href="orders.php">My Orders</a></li>
+							<li><a href="wishlist.php">My Wishlist</a></li>
 							<li><a href="logout.php">Logout</a></li>
 						</ul>
 					</li>
@@ -105,7 +105,7 @@
 							$total = 0;
 					 ?>
 					<div class="s-cart">
-						<div class="sc-ico"><i class="fa fa-shopping-cart"></i><em>2</em></div>
+						<div class="sc-ico"><i class="fa fa-shopping-cart"></i><em><?php echo count($cart); ?></em></div>
 
 						<div class="cart-info">
 							<small>You have <em class="highlight"><?php echo count($cart); ?> item(s)</em> in your shopping bag</small>
