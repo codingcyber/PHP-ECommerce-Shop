@@ -60,7 +60,9 @@ include('includes/header.php');
 							</div>
 							<div class="shop-btn-wrap">
 								<input type="submit" class="button btn-small" value="Add to Cart" /><br>
+								<?php if(isset($_SESSION['id']) & !empty($_SESSION['id'])){ ?>
 								<a href="add-to-wishlist.php?id=<?php echo $product['id']; ?>" class="button btn-small" >Add to Wishlist</a>
+								<?php } ?>
 							</div>
 						</form>
 						<div class="product-meta">
